@@ -8,7 +8,7 @@ const paymentController = require('../controllers/payment.controller');
 module.exports = function(server) {
 
     server.get('/test', (req, res, next) => {
-        paymentController.start_payment_cron("test", "test");
+        paymentController.start_payment_cron("11.8.2017. 00:17", "seconds");
         next();
     });
 
@@ -17,7 +17,14 @@ module.exports = function(server) {
      * Create new savings subscription by
      * updating SC and setting a payment cronjob.
      */
-    server.post('/savings', (req, res, next) => {
+    server.post({url: '/savings', validation: {
+        content : {
+            address: { isRequired: true },
+            startTime: { isRequired: true },
+            quantity: { isRequired: true, isNatural: true },
+            amount: { isRequired: true }
+        }
+    }}, (req, res, next) => {
         if (!req.is('application/json')) {
             return next(
                 new errors.InvalidContentError("Expects 'application/json'")
