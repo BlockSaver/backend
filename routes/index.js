@@ -8,8 +8,8 @@ const paymentController = require('../controllers/payment.controller');
 module.exports = function(server) {
 
     server.get('/test', (req, res, next) => {
-        paymentController.start_payment_cron("11.8.2017. 00:17", "seconds");
-        next();
+        // paymentController.start_payment_cron("11.8.2017. 00:17", "seconds");
+        paymentController.open_savings(10);
     });
 
     /**
@@ -32,7 +32,7 @@ module.exports = function(server) {
         }
 
         const data = req.body;
-        paymentController.create_savings(data);
+        paymentController.open_savings(data);
     });
 
     /**

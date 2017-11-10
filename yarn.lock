@@ -274,8 +274,8 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
 color-convert@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.0.tgz#1accf97dd739b983bf994d56fec8f95853641b7a"
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.1.tgz#c1261107aeb2f294ebffec9ed9ecad529a6097ed"
   dependencies:
     color-name "^1.1.1"
 
@@ -1199,9 +1199,15 @@ negotiator@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+"neo-api-js@git+https://github.com/CityOfZion/neo-api-js.git":
+  version "1.0.1"
+  resolved "git+https://github.com/CityOfZion/neo-api-js.git#0b051fce92627f1d3169b63481ab6d0d4e5c5bba"
+  dependencies:
+    axios "^0.16.2"
+
 "neon-js@git+https://github.com/CityOfZion/neon-js.git":
   version "1.1.1"
-  resolved "git+https://github.com/CityOfZion/neon-js.git#6fc9b5a4dbc8018f3d60701ebd5d2b261b1ddab6"
+  resolved "git+https://github.com/CityOfZion/neon-js.git#0ae7ed07bebe5fff325b9530e8e942068ae771c9"
   dependencies:
     axios "^0.16.2"
     base-x "^3.0.2"
@@ -1375,7 +1381,7 @@ performance-now@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-0.2.0.tgz#33ef30c5c77d4ea21c5a53869d91b56d8f2555e5"
 
-pidusage@^1.1.6:
+pidusage@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pidusage/-/pidusage-1.2.0.tgz#65ee96ace4e08a4cd3f9240996c85b367171ee92"
 
@@ -1550,8 +1556,8 @@ restify-plugins@^1.6.0:
     vasync "^1.6.3"
 
 restify@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/restify/-/restify-6.3.1.tgz#23f68eb91cf184913f48bc3285311e56534167a1"
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/restify/-/restify-6.3.2.tgz#959062c4403e687d39abe43a6c87b10cca12458a"
   dependencies:
     assert-plus "^1.0.0"
     bunyan "^1.8.12"
@@ -1566,7 +1572,7 @@ restify@^6.3.1:
     mime "^1.4.1"
     negotiator "^0.6.1"
     once "^1.4.0"
-    pidusage "^1.1.6"
+    pidusage "^1.2.0"
     qs "^6.5.1"
     restify-errors "^5.0.0"
     semver "^5.4.1"

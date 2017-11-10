@@ -1,6 +1,6 @@
 const config = require('./config');
 const restify = require('restify');
-const restifyPlugins = require('restify-plugins');
+const restifyPlugins = require('restify').plugins;
 const restifyValidation = require('node-restify-validation');
 const restifyErrors = require('restify-errors');
 
