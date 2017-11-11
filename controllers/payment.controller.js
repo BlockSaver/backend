@@ -5,29 +5,25 @@ const Neon = require('neon-js');
 const config = require('../config');
 const NodeService = require("../services/node");
 
-exports.open_savings = function (amount) {
+/**
+ * Create new savings in smart contract.
+ * @param deadline - end time for saving in unixtime
+ * @param name - name/purpose for saving
+ */
+exports.open_savings = function (deadline, name) {
+    const name = Neon.u.str2hexstring(name);
+    const scriptHash = Neon.wallet.getScriptHashFromAddress(config.contractAddress);
+    // Build script
+    const sb = Neon.sc.default.create.scriptBuilder();
+    sb.emitAppCall(scriptHash, "create", [deadline, name]);
+
+    // Test the script with invokescript
+    Neon.rpc.Query.invokeScript(sb.str).execute(NodeService.getNode());
+
+    // Create InvocationTransaction for real execution
     const account = Neon.getAccountFromWIFKey(config.wif);
-    const scriptHash = Neon.getScriptHashFromAddress(config.contractAddress);
-    const invoke = { operation: 'create', scriptHash };
-    const intents = [{ assetId: Neon.ASSETS['NEO'], value: amount, scriptHash }];
-    const gasCost = 0.5;
-    let signedTx;
-    console.log("HERE");
-    NodeService.getBalance(config.contractAddress).then((response) => {
-        // const balance = response.result.balance;
-        console.log("Balance is:", response);
-        const unsignedTx = Neon.create.invocation(account.publicKey, response, intents, invoke, gasCost, { version: 1 });
-        signedTx = Neon.signTransaction(unsignedTx, account.privateKey);
-        const hexTx = Neon.serializeTransaction(signedTx);
-        return Neon.queryRPC(net, 'sendrawtransaction', [hexTx], 4);
-    }).catch(function(error) {
-        console.log(error);
-    }).then((res) => {
-        if (res.result === true) {
-            res.txid = Neon.getTransactionHash(signedTx)
-        }
-        return res
-    })
+    const tx = Neon.sc.default.create.invocationTx(account.publicKey, {}, {}, sb.str, 0);
+    console.log(tx);
 };
 
 exports.start_payment_cron = function (until, period) {

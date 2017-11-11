@@ -21,8 +21,10 @@ module.exports = function(server) {
         content : {
             address: { isRequired: true },
             startTime: { isRequired: true },
-            quantity: { isRequired: true, isNatural: true },
-            amount: { isRequired: true }
+            endTime: { isRequired: true },
+            time: { isRequired: true, isNatural: true },
+            amount: { isRequired: true },
+            name: { isRequired: true },
         }
     }}, (req, res, next) => {
         if (!req.is('application/json')) {
@@ -32,7 +34,7 @@ module.exports = function(server) {
         }
 
         const data = req.body;
-        paymentController.open_savings(data);
+        paymentController.open_savings(data.endTime, data.name);
     });
 
     /**
