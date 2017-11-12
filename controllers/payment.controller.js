@@ -8,43 +8,27 @@ const neo = require('neo-api-js');
 const Neon = require('neon-js');
 
 const config = require('../config');
-const NodeService = require("../services/node");
+const node = require("../services/blockchain");
 const calculateAmountOfNEO = require("./../services/exchange.js");
+const closeSavings = require("./../services/savings");
 
 exports.open_savings = function (deadline, name) {
     const name = Neon.u.str2hexstring(name);
-    const scriptHash = Neon.wallet.getScriptHashFromAddress(config.contractAddress);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
-    sb.emitAppCall(scriptHash, "create", [name, deadline]);
+    sb.emitAppCall(config.scriptHash, "create", [name, deadline]);
 
-    const tx = execute_transaction(sb);
+    const tx = node.execute_transaction(sb);
     console.log(tx);
 };
 
-/**
- *
- */
-function execute_transaction(sb) {
-    // Test the script with invokescript
-    Neon.rpc.Query.invokeScript(sb.str).execute(NodeService.getNode());
-    // Create InvocationTransaction for real execution
-    const account = Neon.sc.default.create.account(config.wif);
-    return Neon.sc.default.create.invocationTx(account.publicKey, {}, {}, sb.str, 0);
-}
-
-function close_savings() {
-
-}
-
 function sendNEOToSmartContract(address, name, amount) {
     const name = Neon.u.str2hexstring(name);
-    const scriptHash = Neon.wallet.getScriptHashFromAddress(config.contractAddress);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
-    sb.emitAppCall(scriptHash, "addFunds", [address, name, amount]);
+    sb.emitAppCall(config.scriptHash, "addFunds", [address, name, amount]);
 
-    const tx = execute_transaction(sb);
+    const tx = node.execute_transaction(sb);
     console.log(tx);
 }
 
@@ -80,7 +64,7 @@ exports.start_payment_cron = function (endTime, time, amount, address, name) {
                 // Savings finished.
                 // End cron job and update smart contract.
                 this.stop();
-                close_savings();
+                closeSavings();
             } else {
                 // Time for payment
                 makePayment(address, name, amount);

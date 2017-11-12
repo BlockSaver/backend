@@ -4,6 +4,9 @@
 const errors = require('restify-errors');
 
 const paymentController = require('../controllers/payment.controller');
+const getSavingsState = require('../services/savings');
+const makeSavingsWithdrawal = require('../services/savings');
+const closeSavings = require('../services/savings');
 
 module.exports = function(server) {
 
@@ -63,8 +66,22 @@ module.exports = function(server) {
     /**
      * End the savings and make a withdrawal.
      */
-    server.post('/withdrawal', (req, res, next) => {
-        next();
+    server.post({url: '/requestwithdrawal', validation: {
+        content : {
+            address: { isRequired: true },
+            name: { isRequired: true },
+        }
+    }}, (req, res, next) => {
+        if (!req.is('application/json')) {
+            return next(
+                new errors.InvalidContentError("Expects 'application/json'")
+            );
+        }
+
+        const data = req.body;
+        const state = getSavingsState(data.name);
+        makeSavingsWithdrawal(data.name, state);
+        closeSavings(name);
     });
 
 };
