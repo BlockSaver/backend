@@ -20,7 +20,6 @@ module.exports = function(server) {
     server.post({url: '/savings', validation: {
         content : {
             address: { isRequired: true },
-            startTime: { isRequired: true },
             endTime: { isRequired: true },
             time: { isRequired: true, isNatural: true },
             amount: { isRequired: true },
@@ -34,7 +33,9 @@ module.exports = function(server) {
         }
 
         const data = req.body;
+        // TODO: Create savings model here
         paymentController.open_savings(data.endTime, data.name);
+        paymentController.start_payment_cron(data.endTime, data.time, data.amount, data.address, data.name);
     });
 
     /**

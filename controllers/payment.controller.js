@@ -1,65 +1,92 @@
+/**
+ * Create new savings in smart contract.
+ * @param deadline - ending date for saving in unixtime
+ * @param name - name/purpose for saving
+ */
 const CronJob = require('cron').CronJob;
 const neo = require('neo-api-js');
 const Neon = require('neon-js');
 
 const config = require('../config');
 const NodeService = require("../services/node");
+const calculateAmountOfNEO = require("./../services/exchange.js");
 
-/**
- * Create new savings in smart contract.
- * @param deadline - end time for saving in unixtime
- * @param name - name/purpose for saving
- */
 exports.open_savings = function (deadline, name) {
     const name = Neon.u.str2hexstring(name);
     const scriptHash = Neon.wallet.getScriptHashFromAddress(config.contractAddress);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
-    sb.emitAppCall(scriptHash, "create", [deadline, name]);
+    sb.emitAppCall(scriptHash, "create", [name, deadline]);
 
-    // Test the script with invokescript
-    Neon.rpc.Query.invokeScript(sb.str).execute(NodeService.getNode());
-
-    // Create InvocationTransaction for real execution
-    const account = Neon.getAccountFromWIFKey(config.wif);
-    const tx = Neon.sc.default.create.invocationTx(account.publicKey, {}, {}, sb.str, 0);
+    const tx = execute_transaction(sb);
     console.log(tx);
 };
 
-exports.start_payment_cron = function (until, period) {
+/**
+ *
+ */
+function execute_transaction(sb) {
+    // Test the script with invokescript
+    Neon.rpc.Query.invokeScript(sb.str).execute(NodeService.getNode());
+    // Create InvocationTransaction for real execution
+    const account = Neon.sc.default.create.account(config.wif);
+    return Neon.sc.default.create.invocationTx(account.publicKey, {}, {}, sb.str, 0);
+}
+
+function close_savings() {
+
+}
+
+function sendNEOToSmartContract(address, name, amount) {
+    const name = Neon.u.str2hexstring(name);
+    const scriptHash = Neon.wallet.getScriptHashFromAddress(config.contractAddress);
+    // Build script
+    const sb = Neon.sc.default.create.scriptBuilder();
+    sb.emitAppCall(scriptHash, "addFunds", [address, name, amount]);
+
+    const tx = execute_transaction(sb);
+    console.log(tx);
+}
+
+function makePayment(address, name, amount) {
+    const NEOAmount = calculateAmountOfNEO(amount);
+    sendNEOToSmartContract(address, name, NEOAmount);
+}
+
+/**
+ * Start cronjob to run every `time` minutes.
+ * We use minutes just for development purposes.
+ * @param endTime Date when saving should end.
+ * @param time Period between payments (in minutes).
+ * @param amount Amount in USD to deposit.
+ * @param address Savings owner address
+ * @param name Savings name/purpose
+ */
+exports.start_payment_cron = function (endTime, time, amount, address, name) {
     /*
      Should use pollingPolicy?
      const pollingPolicy = neo.service.createPollingPolicy(interval);
      pollingPolicy.onInterval(function () {
      });*/
 
-    const endDate = new Date(until);
-    const currentDate = new Date();
-    const hours = currentDate.getHours();
-    const day = currentDate.getDay();
-    const endTimeInMilliSeconds = endDate.getTime();
-
-    let cronTime;
-    let periodInMilliSeconds;
-    if (period === "seconds") {
-        cronTime = `* * * * * *`;   // check each second
-        periodInMilliSeconds = 1000;
-    } else {
-        cronTime = `0 0 ${hours} * * * ${day}`;
-    }
+    const endTime = new Date(endTime);
+    const cronTime = `*/${time} * * * *`;
 
     const job = new CronJob({
-        cronTime: '* * * * * *',
+        cronTime,
         onTick: function() {
-            console.log('You will see this message every second');
-            const timeNow = new Date().getTime();
-            if (endTimeInMilliSeconds < timeNow + periodInMilliSeconds) {
-                console.log("Stopppppping");
-                // this.stop();
+            const currentTime = new Date();
+            if (currentTime >= endTime) {
+                // Savings finished.
+                // End cron job and update smart contract.
+                this.stop();
+                close_savings();
+            } else {
+                // Time for payment
+                makePayment(address, name, amount);
             }
         },
         start: true,
-        timeZone: 'America/Los_Angeles'
     });
 
     job.start();
