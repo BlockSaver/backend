@@ -6,9 +6,10 @@
   "repository": "git@github.com:BlockSaver/backend.git",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.17.1",
     "cron": "^1.3.0",
     "neo-api-js": "git+https://github.com/CityOfZion/neo-api-js.git",
-    "neon-js": "git+https://github.com/CityOfZion/neon-js.git#dev",
+    "neon-js": "git+https://github.com/CityOfZion/neon-js.git",
     "node-restify-validation": "^1.1.1",
     "restify": "^6.3.1",
     "restify-errors": "^5.0.0",

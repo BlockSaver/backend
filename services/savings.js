@@ -15,8 +15,8 @@ exports.Savings = (function(){
     };
 })();
 
-exports.getSavingsState = function(name) {
-    const name = Neon.u.str2hexstring(name);
+exports.getSavingsState = function(savingsName) {
+    const name = Neon.u.str2hexstring(savingsName);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
     sb.emitAppCall(config.scriptHash, "getSavingsByName", name);
@@ -31,8 +31,8 @@ exports.makeSavingsWithdrawal = function(name, savingsState) {
 
 };
 
-exports.closeSavings = function (name) {
-    const name = Neon.u.str2hexstring(name);
+exports.closeSavings = function (savingsName) {
+    const name = Neon.u.str2hexstring(savingsName);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
     sb.emitAppCall(config.scriptHash, "closeSavings", name);

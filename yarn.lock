@@ -108,6 +108,13 @@ axios@^0.16.2:
     follow-redirects "^1.2.3"
     is-buffer "^1.1.5"
 
+axios@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.17.1.tgz#2d8e3e5d0bdbd7327f91bc814f5c57660f81824d"
+  dependencies:
+    follow-redirects "^1.2.5"
+    is-buffer "^1.1.5"
+
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -544,7 +551,7 @@ fill-range@^2.1.0:
     repeat-element "^1.1.2"
     repeat-string "^1.5.2"
 
-follow-redirects@^1.2.3:
+follow-redirects@^1.2.3, follow-redirects@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.2.5.tgz#ffd3e14cbdd5eaa72f61b6368c1f68516c2a26cc"
   dependencies:
@@ -1205,9 +1212,9 @@ negotiator@^0.6.1:
   dependencies:
     axios "^0.16.2"
 
-"neon-js@git+https://github.com/CityOfZion/neon-js.git#dev":
-  version "1.1.0"
-  resolved "git+https://github.com/CityOfZion/neon-js.git#b8e61d43f136de787a99f42192084e9bbc1a2447"
+"neon-js@git+https://github.com/CityOfZion/neon-js.git":
+  version "1.1.1"
+  resolved "git+https://github.com/CityOfZion/neon-js.git#0ae7ed07bebe5fff325b9530e8e942068ae771c9"
   dependencies:
     axios "^0.16.2"
     base-x "^3.0.2"
@@ -1219,7 +1226,6 @@ negotiator@^0.6.1:
     fs "^0.0.1-security"
     js-scrypt "^0.2.0"
     secure-random "^1.1.1"
-    semver "^5.4.1"
     wif "^2.0.6"
 
 node-pre-gyp@^0.6.36:

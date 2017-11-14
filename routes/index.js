@@ -11,8 +11,9 @@ const closeSavings = require('../services/savings');
 module.exports = function(server) {
 
     server.get('/test', (req, res, next) => {
-        // paymentController.start_payment_cron("11.8.2017. 00:17", "seconds");
-        paymentController.open_savings(10);
+        const endDate = new Date().getTime() + 1000;
+        paymentController.open_savings(endDate, "Testing bab bam");
+        // paymentController.start_payment_cron(data.endTime, data.time, data.amount, data.address, data.name);
     });
 
     /**
