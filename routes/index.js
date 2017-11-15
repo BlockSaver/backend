@@ -12,8 +12,8 @@ module.exports = function(server) {
 
     server.get('/test', (req, res, next) => {
         const endDate = new Date().getTime() + 1000;
-        paymentController.open_savings(endDate, "Testing bab bam 2");
-        // paymentController.start_payment_cron(endDate, 2, 30, "AaBBHaXkeJ19AEFWeir7yVv2FbisLsSvSm", "Testes");
+        // paymentController.open_savings(endDate, "Testing bab bam 2");
+        paymentController.startPaymentCronjob(endDate, 2, 125, "AeSD5x3wmFhHfpX3dTVgzeavxxtYNQkayd", "Testing bab bam");
     });
 
     /**

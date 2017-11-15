@@ -10,14 +10,7 @@ module.exports = {
         return axios.get(config.RESTEndpoint + '/v2/address/balance/' + address)
             .then((res) => {
                 return res.data
-                // const neo = res.data.NEO.balance
-                // const gas = res.data.GAS.balance
-                // return { Neo: neo, Gas: gas, unspent: { Neo: res.data.NEO.unspent, Gas: res.data.GAS.unspent } }
             })
-    },
-
-    getNode: () => {
-        return neo.node(config.RPCEndpoint)
     },
 
     getRPCEndpoint: () => {

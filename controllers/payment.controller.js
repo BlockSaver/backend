@@ -28,20 +28,25 @@ exports.open_savings = function (duration, savingsName) {
     node.executeTransaction(account, invoke, gasCost);
 };
 
-function sendNEOToSmartContract(address, savingsName, amount) {
+function sendNEOToSmartContract(savingsAddress, savingsName, amount) {
+    const account = Neon.getAccountFromWIFKey(config.wif);
     const name = util.str2hex(savingsName);
-    // Build script
-    const sb = Neon.sc.default.create.scriptBuilder();
-    sb.emitAppCall(config.scriptHash, "addFunds", [address, name, amount]);
+    const address = util.str2hex(savingsAddress);
+    const args = [address, name];
+    const invoke = { operation: 'addFunds', scriptHash: config.scriptHash, args};
+    const intents = [
+        { assetId: util.ASSETS['NEO'], value: amount, scriptHash: config.scriptHash }
+    ];
+    const gasCost = 10;
 
-    const tx = node.execute_transaction(sb);
-    console.log(tx);
+    node.executeTransaction(account, invoke, gasCost, intents);
 }
 
 function makePayment(address, name, amount) {
-    const NEOAmount = exchange.calculateAmountOfNEO(amount);
-    console.log("NEO amount to be sent:", NEOAmount);
-    sendNEOToSmartContract(address, name, NEOAmount);
+    exchange.calculateAmountOfNEO(amount).then(NEOAmount => {
+        console.log("NEO amount to be sent:", NEOAmount);
+        sendNEOToSmartContract(address, name, NEOAmount);
+    });
 }
 
 /**
@@ -53,7 +58,7 @@ function makePayment(address, name, amount) {
  * @param address Savings owner address
  * @param name Savings name/purpose
  */
-exports.start_payment_cron = function (endDate, time, amount, address, name) {
+exports.startPaymentCronjob = function (endDate, time, amount, address, name) {
     /*
      Should use pollingPolicy?
      const pollingPolicy = neo.service.createPollingPolicy(interval);
