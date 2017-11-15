@@ -13,14 +13,16 @@ const calculateAmountOfNEO = require("./../services/exchange.js");
 const closeSavings = require("./../services/savings");
 const util = require('../util');
 
-
+// TODO: Move open savings to client
 exports.open_savings = function (duration, savingsName) {
     const name = util.str2hex(savingsName);
     const account = Neon.getAccountFromWIFKey(config.wif);
     const scriptHash = config.scriptHash;
     const args = [name, duration];
     const invoke = { operation: 'createSavings', scriptHash , args};
-    const intents = [{ assetId: util.ASSETS['NEO'], value: 0, scriptHash }];
+    const intents = [
+        // { assetId: util.ASSETS['NEO'], value: 0, scriptHash }
+    ];
     const gasCost = 10;
     let signedTx;
 
