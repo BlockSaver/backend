@@ -36,13 +36,16 @@ module.exports = {
         });
     },
 
-    execute_transaction: (sb) => {
-        // Test the script with invokescript
-        const node = neo.node(config.RPCEndpoint);
-        Neon.rpc.Query.invokeScript(sb.str).execute(node);
-        // Create InvocationTransaction for real execution
-        const account = Neon.sc.default.create.account(config.wif);
-        const invoke = { operation: 'createSavings', scriptHash: sb.str };
-        return tx.create.createInvocationTx(account.publicKey, {}, {}, invoke, 0);
+    executeTransaction: (fromAccount, invoke, gasCost, intents = []) => {
+        return module.exports.getBalance(fromAccount.address).then((balances) => {
+            const unsignedTx = Neon.create.invocation(fromAccount.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 });
+            const signedTx = Neon.signTransaction(unsignedTx, fromAccount.privateKey);
+            const hexTx = Neon.serializeTransaction(signedTx);
+            return module.exports.queryRPC('sendrawtransaction', [hexTx]);
+        }).catch(function(error) {
+            console.log(error);
+        }).then((res) => {
+            console.log(res);
+        })
     }
 };

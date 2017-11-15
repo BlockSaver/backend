@@ -9,7 +9,7 @@ const Neon = require('neon-js');
 
 const config = require('../config');
 const node = require("../services/blockchain");
-const calculateAmountOfNEO = require("./../services/exchange.js");
+const exchange = require("../services/exchange.js");
 const closeSavings = require("./../services/savings");
 const util = require('../util');
 
@@ -23,23 +23,13 @@ exports.open_savings = function (duration, savingsName) {
     const intents = [
         // { assetId: util.ASSETS['NEO'], value: 0, scriptHash }
     ];
-    const gasCost = 10;
-    let signedTx;
+    const gasCost = 0;
 
-    node.getBalance(account.address).then((balances) => {
-        const unsignedTx = Neon.create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 });
-        signedTx = Neon.signTransaction(unsignedTx, account.privateKey);
-        const hexTx = Neon.serializeTransaction(signedTx);
-        return node.queryRPC('sendrawtransaction', [hexTx]);
-    }).catch(function(error) {
-        console.log(error);
-    }).then((res) => {
-        console.log(res);
-    })
+    node.executeTransaction(account, invoke, gasCost);
 };
 
 function sendNEOToSmartContract(address, savingsName, amount) {
-    const name = Neon.u.str2hexstring(savingsName);
+    const name = util.str2hex(savingsName);
     // Build script
     const sb = Neon.sc.default.create.scriptBuilder();
     sb.emitAppCall(config.scriptHash, "addFunds", [address, name, amount]);
@@ -49,7 +39,8 @@ function sendNEOToSmartContract(address, savingsName, amount) {
 }
 
 function makePayment(address, name, amount) {
-    const NEOAmount = calculateAmountOfNEO(amount);
+    const NEOAmount = exchange.calculateAmountOfNEO(amount);
+    console.log("NEO amount to be sent:", NEOAmount);
     sendNEOToSmartContract(address, name, NEOAmount);
 }
 
@@ -71,6 +62,9 @@ exports.start_payment_cron = function (endDate, time, amount, address, name) {
 
     const endTime = new Date(endDate);
     const cronTime = `*/${time} * * * *`;
+
+    makePayment(address, name, amount);
+    return;
 
     const job = new CronJob({
         cronTime,

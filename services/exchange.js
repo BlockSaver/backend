@@ -5,7 +5,11 @@ function getNEOPrice(currency = defaultCurrency) {
     return 30;  // 1 NEO = 30$
 }
 
-exports.calculateAmountOfNEO = function(amount, currency = defaultCurrency) {
-    const price = getNEOPrice();
-    return Math.round(amount / price);
+module.exports = {
+
+    calculateAmountOfNEO: function(amount, currency = defaultCurrency) {
+        const price = getNEOPrice();
+        return Math.round(amount / price);
+    },
+
 };
