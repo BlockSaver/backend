@@ -21,14 +21,52 @@ module.exports = {
         return hexstring.length % size === 0 ? hexstring : ('0'.repeat(size) + hexstring).substring(hexstring.length);
     },
 
-    str2hex: (str) => {
-        let hex;
-        let result = "";
-        for (let i = 0; i < str.length; i++) {
-            hex = str.charCodeAt(i).toString(16);
-            result += ("000" + hex).slice(-4);
+    str2hex: str => {
+        let arr1 = [];
+        for (let n = 0, l = str.length; n < l; n++) {
+            const hex = Number(str.charCodeAt(n)).toString(16);
+            arr1.push(hex);
+        }
+        return arr1.join('');
+    },
+
+    reverseHex: hex => {
+        if (hex.length % 2 !== 0) throw new Error(`Incorrect Length: ${hex}`);
+        let out = '';
+        for (let i = hex.length - 2; i >= 0; i -= 2) {
+            out += hex.substr(i, 2);
+        }
+        return out
+    },
+
+    hexstring2ab: str => {
+        let result = []
+        while (str.length >= 2) {
+            result.push(parseInt(str.substring(0, 2), 16))
+            str = str.substring(2, str.length)
         }
 
-        return result;
+        return result
+    },
+
+    ab2str: buf => { return String.fromCharCode.apply(null, new Uint8Array(buf)) },
+
+
+    /**
+     * Parses the VM Stack and returns human readable strings
+     * @param {{type:string, value: string}[]} stack - VM Output
+     * @return {any[]} Array of results
+     */
+    parseVMStack(stack) {
+        return stack.map((item) => {
+            switch (item.type) {
+                case 'ByteArray':
+                    return module.exports.ab2str(module.exports.hexstring2ab(item.value));
+                case 'Integer':
+                    return parseInt(item.value, 10);
+                default:
+                    throw Error(`Unknown type: ${item.type}`);
+            }
+        })
     }
 };
